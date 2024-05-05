@@ -1,17 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+
 body,
 html {
+  font-family: "Poppins", sans-serif;
   height: 100%;
   margin: 0;
   background: black;
 }
 .seccionNumPlantas p {
-  color: rgb(226, 223, 223);
-  font-size: clamp(1.8rem, 1.8vmin, 8rem);
+  color: hsl(0 0% 90%);
+  font-family: "Poppins", sans-serif;
+  /* font-family: sans-serif; */
+  font-size: clamp(2.2rem, 1.8vmin, 8rem);
+}
+.seccionNumPlantas span{
+  color: hsl(0 0% 100%);
+  font-size: clamp(2.5rem, 1.8vmin, 8rem);
+
+  font-weight: 600;
+  /* font-size: clamp(2rem, 1.8vmin, 8rem); */
+
 }
 .condicionPlanta h1 {
-  font-size: clamp(3rem, 2vmin, 8rem);
-  font-family: sans-serif;
   color: hsl(0 0% 98%);
+  font-size: clamp(3.2rem, 2vmin, 8rem);
+  /* font-family: sans-serif; */
+  font-family: "Poppins", sans-serif;
+  margin-left: 0px;
 }
 
 .chart {
@@ -24,16 +40,23 @@ html {
 
 .header{
     display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px; 
 }
 
 .rightContainer{
     flex: 1;
-    margin-left: 350px;
+    padding-left: 200px;
+    /* margin-left: 350px; */
     
 }
 .leftContainer{
+  
+  padding-right: 50px;
+  padding-left: 40px;
     flex: 1;
-    margin-left: 40px;
+   
 }
 
 
@@ -41,8 +64,8 @@ html {
 
 
 .botones{
-/* display: flex; */
-/* justify-content: space-between; */
+/* display: flex;
+justify-content: space-between; */
 }
 
 .botones button {
@@ -53,11 +76,12 @@ html {
   box-sizing: border-box;
   color: #ffffff;
   cursor: pointer;
-  font-size: clamp(2rem, 2vmin, 8rem);
-  font-family: sans-serif;
-  font-weight: 600;
+  font-size: clamp(1.6rem, 2vmin, 8rem);
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
   line-height: normal;
   margin: 10px;
+  margin-top: 40px;
   min-height: 190px;
   min-width: 500px;
   outline: none;
@@ -90,6 +114,7 @@ html {
 
 .middle{
   display: flex;
+  margin-top: 40px;
 
 }
 
@@ -101,10 +126,11 @@ html {
  
 }
 .rightMiddle h3{
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
   padding-top: 20px;
 text-align: center;
-  font-size: clamp(1.7rem, 2vmin, 8rem);
-  font-family: sans-serif;
+  font-size: clamp(1.6rem, 2vmin, 8rem);
   color: hsl(0 0% 98%);
 }
 
@@ -117,16 +143,16 @@ text-align: center;
 }
 
 
-
 .box{
    transition: transform 0.3s;
   cursor: pointer;
-  height: 500px;
-  width: 490px;
-  margin-left: 40px;
+  height: 470px;
+  width: 470px;
+  margin-left: 55px;
   /* margin: 20px auto; */
-  margin-top:55px;
+  margin-top:140px;
   border-radius:15px;
+
 
   /* box-shadow: 1px 2px 10px 0px rgba(0,0,0,0.3);
  background: rgb(12, 17, 2);

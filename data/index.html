@@ -8,16 +8,35 @@
   </head>
   <body>
     <div class="container">
-        <div class="bienvenido">
-            <h1>Bienvenido</h1>
-          </div>
-      
-          <div class="botones">
-            <button class="controles">Controles</button>
-            <button class="estadisticas">Estadisticas en tiempo real</button>
-            <button class="config">Configuracion</button>
-          </div>
+      <h1>Bienvenido</h1>
+      <div class="botones">
+        <button class="controles" onclick="cerrarYRedirigir('controladores')">
+          Controles
+        </button>
+        <a href="estadisticas.html">
+          <button class="estadisticas" onclick="cerrarYRedirigir('a')">
+            Estadísticas en tiempo real
+          </button>
+        </a>
+        <button class="config" onclick="cerrarYRedirigir()">
+          Configuración
+        </button>
+      </div>
     </div>
-   
+    <script>
+      function cerrarYRedirigir(pet) {
+        var urlActual = window.location.href;
+        console.log(urlActual);
+        if (pet == "controladores") {
+          window.location.href =
+            "https://blynk.cloud/dashboard/168098/global/devices/1257163/organization/168098/devices/616016/dashboard";
+        }
+        if (pet == "a") {
+          window.location.href = urlActual + "/a";
+        }
+        window.close();
+        console.log("debería cerrarse");
+      }
+    </script>
   </body>
 </html>
