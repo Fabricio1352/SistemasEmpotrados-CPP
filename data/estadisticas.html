@@ -8,49 +8,62 @@
   </head>
   <body>
     <div class="header">
-        <div class="leftContainer">
-            <div class="seccionNumPlantas">
-                <p>Sección: <span>2</span></p>
-                <p>Numero de plantas: <span>5</span></p>
-                <p>Planta observada: <span>Algodón </span></p>
-                <p>Condicion general de la sección: <span>Buena</span></p>
-            </div>
+      <div class="leftContainer">
+        <div class="seccionNumPlantas">
+          <p>Sección: <span>2</span></p>
+          <p>Numero de plantas: <span>5</span></p>
+          <p>Planta observada: <span>Algodón </span></p>
+          <p>Condicion general de la sección: <span>Buena</span></p>
         </div>
-        <div class="rightContainer">
-            <div class="botones">
-                <button class="recomendaciones">Recomendaciones <br />de esta semana</button>
-                <button class="recomendaciones" id="boton" onclick="controladores()">Controladores</button>
-            </div>
+      </div>
+      <div class="rightContainer">
+        <div class="botones">
+          <button class="recomendaciones" >
+          <a href="recomendaciones.html"> Recomendaciones <br />de esta semana</a> 
+          </button>
+          <button class="recomendaciones" id="boton" onclick="controladores()">
+            Controladores
+          </button>
         </div>
+      </div>
     </div>
 
     <div class="middle">
-        <div class="leftMiddle">
-            <div class="condicionPlanta">
-                <h1>Condicion de la planta:</h1>
-                <div class="desgloseGraficas"></div>
-            </div>
-            <div class="chart">
-                <canvas id="horChart" height="40px"> </canvas>
-                <canvas id="horChart2" height="40px"> </canvas>
-                <canvas id="horChart3" height="40px"> </canvas>
-            </div>
-            <script src="https://cdn.jsdelivr.net/npm/chart.js@3.8.0/dist/chart.min.js"></script>
-            <script src="chart.js"></script>
+      <div class="leftMiddle">
+        <div class="condicionPlanta">
+          <h1 id="titulo">Condición: </h1>
+
+          <div class="desgloseGraficas"></div>
         </div>
-        <div class="rightMiddle">
-            <div class="box">
-                <h3>Datos Historicos</h3>
-                <img src="linearchartttt.png" alt="" />
-            </div>
+        <div class="chart">
+          <canvas id="horChart" height="40px"> </canvas>
+          <canvas id="horChart2" height="40px"> </canvas>
+          <canvas id="horChart3" height="40px"> </canvas>
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.8.0/dist/chart.min.js"></script>
+        <script src="chart.js"></script>
+        <button
+          id="recargarDatos"
+          class="botonRecargarDatos"
+          onclick="recargarPagina()"
+        >
+          Recargar Datos
+        </button>
+      </div>
+      <div class="rightMiddle">
+        <div class="box">
+          <h3>Datos Historicos</h3>
+          <img src="linearchartttt.png" alt="" />
+        </div>
+      </div>
     </div>
 
     <script>
-        function controladores() {
-            window.location.href = "https://blynk.cloud/dashboard/168098/global/devices/1257163/organization/168098/devices/616016/dashboard";
-            window.close();
-        }
+      function controladores() {
+        window.location.href =
+          "https://blynk.cloud/dashboard/168098/global/devices/1257163/organization/168098/devices/616016/dashboard";
+        window.close();
+      }
     </script>
-</body>
+  </body>
 </html>

@@ -1,7 +1,9 @@
 var ctx = document.getElementById("horChart").getContext("2d");
-var temperatura, humedad;
+var temperatura, humedad, presion;
+
 obtener("Temperatura");
 obtener("Humedad");
+obtener("Presion");
 
 var myChart = new Chart(ctx, {
   type: "bar",
@@ -49,7 +51,8 @@ var myChart2 = new Chart(ctx, {
     datasets: [
       {
         label: "Presion",
-        data: [1100, 300, 400, 500, 600, 700, 800, 900, 1000], // esto es lo que se va sacar del html tmb
+        // data: [1100, 300, 400, 500, 600, 700, 800, 900, 1000],
+        data:[],
         backgroundColor: [
           // 'rgba(255, 99, 132, 0.2)',
           "rgba(54, 162, 235, 0.2)",
@@ -143,6 +146,10 @@ function obtener(variable) {
       } else if (variable == "Humedad") {
         humedad = this.responseText;
         actualizarGrafico(3, humedad);
+      }
+      else if (variable == "Presion") {
+        presion = this.responseText;
+        actualizarGrafico(2, presion);
       }
     }
   };

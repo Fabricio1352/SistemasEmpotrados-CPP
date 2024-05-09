@@ -1,0 +1,96 @@
+
+// void setupFirebase()
+// {
+//     if (firebaseConfigReady)
+//         return;
+
+//     firebaseConfigReady = true;
+
+//     // For the following credentials, see examples/Authentications/SignInAsUser/EmailPassword/EmailPassword.ino
+
+//     /* Assign the api key (required) */
+//     config.api_key = "";
+
+//     /* Assign the user sign in credentials */
+//     auth.user.email = "firebase-adminsdk-piomm@esp32-b69ac.iam.gserviceaccount.com";
+//     auth.user.password =  "sr5olqF7CxXBPEnvWbTD6TruPL221ZHuKKk4c2e4";
+
+//     /* Assign the RTDB URL (required) */
+//     config.database_url = "https://esp32-b69ac-default-rtdb.firebaseio.com/";
+
+//     /* Assign the callback function for the long running token generation task */
+//     config.token_status_callback = tokenStatusCallback; // see addons/TokenHelper.h
+
+//     // Comment or pass false value when WiFi reconnection will control by your code or third party library e.g. WiFiManager
+//     Firebase.reconnectNetwork(true);
+
+//     // Since v4.4.x, BearSSL engine was used, the SSL buffer need to be set.
+//     // Large data transmission may require larger RX buffer, otherwise connection issue or data read time out can be occurred.
+//     fbdo.setBSSLBufferSize(4096 /* Rx buffer size in bytes from 512 - 16384 */, 1024 /* Tx buffer size in bytes from 512 - 16384 */);
+
+//     // Or use legacy authenticate method
+//     // config.database_url = DATABASE_URL;
+//     // config.signer.tokens.legacy_token = "<database secret>";
+
+//     // To connect without auth in Test Mode, see Authentications/TestMode/TestMode.ino
+
+//     Firebase.begin(&config, &auth);
+
+//     Firebase.setDoubleDigits(5);
+// }
+
+// para ir haciendo las pruebas unitarias, hay que conectar la base de datos
+//   lo que vamos a guardar son datos
+//       -- rayos uv
+//       -- temperatura
+//       -- humedad relativa
+//       OPCIONAL -- agua utilizada en la semana
+//  pero no no sirve guardar cada hora un valor
+//  ocupamos el valor promedio de la semana, o la temperatura de cada 7 dias
+
+// traemos otra vez los datos, cada hora, filtramos los que ocupamos nada mas
+// traemos esos datos de cada hora, guardamos en la base de datos, cuando se consulte la pagina de recomendaciones, traemos esos datos de la bd, ahi sacamos el promedio y hacemos las graficas y algoritmos
+
+// String obtenerPresion()
+// {
+//   if (bmp.takeForcedMeasurement())
+//   {
+//     float p = bmp.readPressure();
+//     Serial.print(F("Pressure = "));
+//     Serial.print(bmp.readPressure());
+//     return String(p);
+//   }
+//   else
+//   {
+//     Serial.println("Forced measurement failed!");
+//   }
+//   return String();
+// }
+
+
+
+    // Firebase.RTDB.setInt(&firebaseData, "/sensoresdata/humedad", promH);
+    // Firebase.RTDB.setInt(&firebaseData, "/sensoresdata/temperatura", promT);
+    // Firebase.RTDB.setInt(&firebaseData, "/sensoresdata/uvi", promU);
+    // void setupFirebase();
+
+
+// #include <addons/TokenHelper.h>
+// #include <addons/RTDBHelper.h>
+
+// #include <BlynkEdgent.h>
+// https://www.youtube.com/watch?v=HRGQQATYJCQ&t=465s
+
+// #define BMP_SCK (13)
+// #define BMP_MISO (12)
+// #define BMP_MOSI (11)
+// #define BMP_CS (10)
+// #define API_KEY "API_KEY"
+// #define DATABASE_URL "https://esp32-b69ac-default-rtdb.firebaseio.com/"
+// #define USER_EMAIL "firebase-adminsdk-piomm@esp32-b69ac.iam.gserviceaccount.com"
+// #define USER_PASSWORD "sr5olqF7CxXBPEnvWbTD6TruPL221ZHuKKk4c2e4"
+// FirebaseData fbdo;
+// FirebaseAuth auth;
+// FirebaseConfig config;
+// #include "Firebase_ESP_Client.h"
+// FirebaseData firebaseData;

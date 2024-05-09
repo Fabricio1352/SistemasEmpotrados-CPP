@@ -8,79 +8,48 @@
 #include <AsyncTCP.h>
 #include "ESPAsyncWebServer.h"
 #include <SPIFFS.h>
-#include <time.h>
 #include <NoDelay.h>
 #include <Adafruit_BMP280.h>
 #include "DHT.h"
-#include <Wire.h>
 #include <SPI.h>
 #include <BlynkSimpleEsp32.h>
 #include <WiFiClient.h>
-// #include "Firebase_ESP_Client.h"
 #include "ArrayList.h"
-// #include <addons/TokenHelper.h>
-// #include <addons/RTDBHelper.h>
+#define relay 4
 
-// #include <BlynkEdgent.h>
-// https://www.youtube.com/watch?v=HRGQQATYJCQ&t=465s
+ArrayList<int> humedadData, tempData, uviData, promsHumedad;
+HTTPClient http;
+Adafruit_BMP280 bmp;
 
-// #define BMP_SCK (13)
-// #define BMP_MISO (12)
-// #define BMP_MOSI (11)
-// #define BMP_CS (10)
-// #define API_KEY "API_KEY"
-// #define DATABASE_URL "https://esp32-b69ac-default-rtdb.firebaseio.com/"
-// #define USER_EMAIL "firebase-adminsdk-piomm@esp32-b69ac.iam.gserviceaccount.com"
-// #define USER_PASSWORD "sr5olqF7CxXBPEnvWbTD6TruPL221ZHuKKk4c2e4"
-// FirebaseData fbdo;
-// FirebaseAuth auth;
-// FirebaseConfig config;
 bool firebaseConfigReady = false;
-
-
-
-ArrayList<int> datos, humedadData, tempData, uviData, promsHumedad;
-// FirebaseData firebaseData;
-
-Adafruit_BMP280 bmp; // I2C
 char authBlynk[] = "wkObE_YGSF3F0F_XrAIkxYlzuvK_HiJR";
 const char *ssid = "Ubee1D42-2.4G";
 const char *pw = "B5D7FC1D42";
-// const byte pinBomba = 4;
-
 // const char *ssid = "IoT_LV323";
 // const char *pw = "@dm1nLV323";
+
 DHT dht(5, DHT11);
-String temperatura, humedad, presion;
-String serverName = "https://api.openweathermap.org/data/3.0/onecall?lat=29.10&lon=-110.97&units=metric&exclude=hourly,daily,minutely&appid=bb5a9e25d5335be9568d59bf17797bb5";
+// String temperatura,
+double temperatura;
+String humedad, presion;
 BlynkTimer timer;
-int current_uv;
-int lastTime = 0;
+int current_uv, current_presure, current_windspeed;
 AsyncWebServer server(80);
-noDelay pausa(10000),pausa2(15000),pausa3(600000);
-// void lecturaBmp280();
+// noDelay pausa(10000), pausa2(15000), pausa3(600000);
+noDelay pausa(1000), pausa2(120000);
 void actualizaLectura();
-String processor(const String &var),obtenTemp(),obtenHumedad(),obtenerPresion();
+double obtenTemp();
 void conectaRedWifi(const char *ssid, const char *pw);
 void inicializaSPIFFS();
 void configuraServidor();
-// void noHallada(AsyncWebServerRequest *request);
 void callApi();
-// void setupFirebase();
+void urlData(double t, double hr, double uvi);
 int calculaPromedio(ArrayList<int> lista);
 
 void setup()
 {
   Serial.begin(9600);
   Blynk.begin(authBlynk, ssid, pw, "blynk.cloud", 80);
-  // if (!bmp.begin(0x76) || !bmp.begin(0x50) || !bmp.begin(0x40))
-  // {
-  //   Serial.print("hola");
-  //   Serial.println(F("Could not find a valid BMP280 sensor, check wiring or "
-  //                    "try a different address!"));
-  //   while (1)
-  //     ;
-  // }
   bmp.setSampling(Adafruit_BMP280::MODE_FORCED,     /* Operating Mode. */
                   Adafruit_BMP280::SAMPLING_X2,     /* Temp. oversampling */
                   Adafruit_BMP280::SAMPLING_X16,    /* Pressure oversampling */
@@ -92,48 +61,75 @@ void setup()
   configuraServidor();
   server.begin();
   Serial.println("Servidor web inicializado");
-  // setupFirebase();
+  pinMode(relay, OUTPUT);
+  digitalWrite(relay, HIGH);
+  callApi();
 }
 
 void loop()
 {
-  ArrayList<int> datos, humedadData, tempData, uviData, promsHumedad;
-
 
   if (pausa.update())
   {
     actualizaLectura();
-    Blynk.run();
-    Blynk.virtualWrite(V2, temperatura);
-    Blynk.virtualWrite(V0, humedad.toInt());
-    Blynk.virtualWrite(V3, current_uv);
-    humedadData.add(humedad.toInt());
+
+    // humedadData.add(humedad.toInt());
   }
   if (pausa2.update())
   {
-
-    // guardamos en un arreglo cada current
-    int promH = calculaPromedio(humedadData);
-    promsHumedad.add(promH);
-    tempData.add(temperatura.toInt());
-    uviData.add(current_uv);
-    humedadData.clear();
+    callApi();
+    Serial.println(current_windspeed);
   }
-  if (pausa3.update())
-  {
-    int promH = calculaPromedio(promsHumedad);
-    int promT = calculaPromedio(tempData);
-    int promU = calculaPromedio(uviData);
-    // aqui si metemos a la base de datos un promedio general
+  /*
+    // if (pausa2.update())
+  // {
 
-    Firebase.RTDB.setInt(&firebaseData, "/sensoresdata/humedad", promH);
-    Firebase.RTDB.setInt(&firebaseData, "/sensoresdata/temperatura", promT);
-    Firebase.RTDB.setInt(&firebaseData, "/sensoresdata/uvi", promU);
-  }
+  //   // guardamos en un arreglo cada current
+  //   humedadData.add(50);
+  //   humedadData.add(30);
+  //   humedadData.add(75);
+
+  //   int promH = calculaPromedio(humedadData);
+  //   promsHumedad.add(promH);
+  //   tempData.add(temperatura.toInt());
+  //   uviData.add(current_uv);
+  //   humedadData.clear();
+  // }
+  // if (pausa3.update())
+  // {
+
+  // tempData.add(59);
+  // tempData.add(54);
+  // tempData.add(51);
+  // uviData.add(2);
+  // uviData.add(1);
+  // uviData.add(7);
+  // double promH = calculaPromedio(promsHumedad);
+  // double promT = calculaPromedio(tempData);
+  // double promU = calculaPromedio(uviData);
+  // Serial.println("promedio h: " + String(promH));
+  // Serial.println("Promedio t:" + String(promT));
+  // Serial.println("Promedio u:" + String(promU));
+  // Serial.println("arreglos: ");
+  // for (int i = 0; i < uviData.size(); i++)
+  // {
+  //   Serial.println(uviData.get(i));
+  // }
+  // for (int i = 0; i < tempData.size(); i++)
+  // {
+  //   Serial.println(tempData.get(i));
+  // }    for (int i = 0; i < promsHumedad.size(); i++)
+  // {
+  //   Serial.println(promsHumedad.get(i));
+  // }
+  // aqui si metemos a la base de datos un promedio general
+  // urlData(1, 1, 1);
+  // }
+
+
+  */
 }
-/*
- * Conecta el microcontrolador ESP32 a una red WiFi
- */
+
 void conectaRedWifi(const char *ssid, const char *password)
 {
   // Conexion a la red
@@ -156,9 +152,7 @@ void conectaRedWifi(const char *ssid, const char *password)
 
   Serial.println(WiFi.localIP());
 }
-/**
- * Esta funcion monta el sistema de archivos SPIFFS
- */
+
 void inicializaSPIFFS()
 {
   if (!SPIFFS.begin(true))
@@ -171,10 +165,6 @@ void inicializaSPIFFS()
   }
 }
 
-/**
- * Mapea las funcionalidades del servidor a los URL con las que SERAN INVOCADAS
- */
-
 void configuraServidor()
 {
 
@@ -183,76 +173,47 @@ void configuraServidor()
             { request->send(SPIFFS, "/index.html", "text/html"); });
 
   server.on("/a", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/estadisticas.html", "text/html", false, processor); });
+            { request->send(SPIFFS, "/estadisticas.html", "text/html", false, NULL); });
 
   server.on("/obtenTemperatura", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(200, "text/plain", temperatura); });
+            { request->send(200, "text/plain", String(temperatura)); });
 
   server.on("/obtenHumedad", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", humedad); });
+  server.on("/obtenPresion", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(200, "text/plain", String(current_presure)); });
   server.on("/controladores", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->redirect("https://blynk.cloud/dashboard/168098/global/devices/1257163/organization/168098/devices/616016/dashboard"); });
 };
 
-String processor(const String &var)
-{
-  if (var == "TEMPERATURA")
-  {
-    return temperatura;
-  }
-  else if (var == "HUMEDAD")
-  {
-    return humedad;
-  }
-  return String();
-}
-
 void actualizaLectura()
 {
-  temperatura = obtenTemp();
+  // temperatura = obtenTemp();
   humedad = obtenHumedad();
-  callApi();
-  // presion = obtenerPresion();
+  Blynk.run();
+  Blynk.virtualWrite(V2, temperatura);
+  Blynk.virtualWrite(V0, humedad.toInt());
+  Blynk.virtualWrite(V3, current_uv);
+  Blynk.virtualWrite(V4, current_windspeed);
 }
 
-String obtenTemp()
+double obtenTemp()
 {
   float tempCent = dht.readTemperature();
   if (isnan(tempCent))
   {
-    Serial.println("Error al leer el sensor DHT11");
-    return String();
+    // Serial.println("Error al leer el sensor DHT11");
+    return 0;
   }
-  return String(tempCent);
+  return tempCent;
 }
-// String obtenerPresion()
-// {
-//   if (bmp.takeForcedMeasurement())
-//   {
-//     float p = bmp.readPressure();
-//     Serial.print(F("Pressure = "));
-//     Serial.print(bmp.readPressure());
-//     return String(p);
-//   }
-//   else
-//   {
-//     Serial.println("Forced measurement failed!");
-//   }
-//   return String();
-// }
+
 String obtenHumedad()
 
 {
   float lectura = analogRead(32);
-  return String(((lectura / 4095) * 100));
+  return String(100 - ((lectura / 4095) * 100));
 }
-
-//  obtenemos los datos de una api de
-//    - UV HERMOSILLO
-//    - RADIACION SOLAR HERMOSILLO
-//  luego, guardamos esos datos en variables
-//  y mandamos esos datos al blynk
-// ahora ocupamos guardar el valor del switch de la bomba
 
 void callApi()
 {
@@ -260,8 +221,7 @@ void callApi()
 
   if (WiFi.status() == WL_CONNECTED)
   {
-    HTTPClient http;
-    String serverPath = serverName;
+    String serverPath = "https://api.openweathermap.org/data/3.0/onecall?lat=33.44&lon=-94.04&exclude=hourly,minutely,daily&units=metric&appid=f86f1ae55d3838b3aa1bee067582b656";
 
     http.begin(serverPath.c_str());
 
@@ -285,9 +245,7 @@ void callApi()
     Serial.println("Disconected");
   }
 
-  lastTime = millis();
-
-  DynamicJsonDocument jsonDoc(768); // Tamaño del documento JSON
+  DynamicJsonDocument jsonDoc(768);
   DeserializationError error = deserializeJson(jsonDoc, payload);
 
   if (error)
@@ -298,6 +256,9 @@ void callApi()
   }
   JsonObject current = jsonDoc["current"];
   current_uv = current["uvi"];
+  current_presure = current["pressure"];
+  current_windspeed = current["wind_speed"];
+  temperatura = current["temp"];
 }
 
 int calculaPromedio(ArrayList<int> lista)
@@ -311,54 +272,35 @@ int calculaPromedio(ArrayList<int> lista)
   return promedio;
 }
 
-// void setupFirebase()
-// {
-//     if (firebaseConfigReady)
-//         return;
+void urlData(double t, double hr, double uvi)
+{
+  http.begin("http://localhost:8080/create");
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+  // int httpResponseCode = http.POST("t=" + String(t) + "&hr=" + String(hr) + "=&uvi=" + String(uvi));
+  int httpResponseCode = http.POST("t=1&hr=1&uvi=1");
+  if (httpResponseCode > 0)
+  {
+    Serial.print("Respuesta del servidor: ");
+    Serial.println(http.getString());
+  }
+  else
+  {
+    Serial.print("Error en la solicitud. Código de respuesta: ");
+    Serial.println(httpResponseCode);
+  }
 
-//     firebaseConfigReady = true;
+  http.end();
+}
 
-//     // For the following credentials, see examples/Authentications/SignInAsUser/EmailPassword/EmailPassword.ino
-
-//     /* Assign the api key (required) */
-//     config.api_key = "";
-
-//     /* Assign the user sign in credentials */
-//     auth.user.email = "firebase-adminsdk-piomm@esp32-b69ac.iam.gserviceaccount.com";
-//     auth.user.password =  "sr5olqF7CxXBPEnvWbTD6TruPL221ZHuKKk4c2e4";
-
-//     /* Assign the RTDB URL (required) */
-//     config.database_url = "https://esp32-b69ac-default-rtdb.firebaseio.com/";
-
-//     /* Assign the callback function for the long running token generation task */
-//     config.token_status_callback = tokenStatusCallback; // see addons/TokenHelper.h
-
-//     // Comment or pass false value when WiFi reconnection will control by your code or third party library e.g. WiFiManager
-//     Firebase.reconnectNetwork(true);
-
-//     // Since v4.4.x, BearSSL engine was used, the SSL buffer need to be set.
-//     // Large data transmission may require larger RX buffer, otherwise connection issue or data read time out can be occurred.
-//     fbdo.setBSSLBufferSize(4096 /* Rx buffer size in bytes from 512 - 16384 */, 1024 /* Tx buffer size in bytes from 512 - 16384 */);
-
-//     // Or use legacy authenticate method
-//     // config.database_url = DATABASE_URL;
-//     // config.signer.tokens.legacy_token = "<database secret>";
-
-//     // To connect without auth in Test Mode, see Authentications/TestMode/TestMode.ino
-
-//     Firebase.begin(&config, &auth);
-
-//     Firebase.setDoubleDigits(5);
-// }
-
-// para ir haciendo las pruebas unitarias, hay que conectar la base de datos
-//   lo que vamos a guardar son datos
-//       -- rayos uv
-//       -- temperatura
-//       -- humedad relativa
-//       OPCIONAL -- agua utilizada en la semana
-//  pero no no sirve guardar cada hora un valor
-//  ocupamos el valor promedio de la semana, o la temperatura de cada 7 dias
-
-// traemos otra vez los datos, cada hora, filtramos los que ocupamos nada mas
-// traemos esos datos de cada hora, guardamos en la base de datos, cuando se consulte la pagina de recomendaciones, traemos esos datos de la bd, ahi sacamos el promedio y hacemos las graficas y algoritmos
+BLYNK_WRITE(V1)
+{
+  bool Relay = param.asInt();
+  if (Relay == 1)
+  {
+    digitalWrite(relay, LOW);
+  }
+  else
+  {
+    digitalWrite(relay, HIGH);
+  }
+}

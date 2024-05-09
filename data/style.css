@@ -12,7 +12,10 @@ body, html {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    /* height: 100vh; */
+    
+
+    height: 100%;
 }
 
 .container h1 {
@@ -48,4 +51,53 @@ body, html {
 .botones button:active {
     box-shadow: none;
     transform: translateY(0);
+}
+
+
+.bottom{
+width: 100%;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ /* max-height: 500px; */
+ overflow: hidden;
+}
+.imagenes{
+    justify-content: space-between;
+}
+
+.nose, .spring{
+    width: 100px;
+    margin-bottom: 15px;
+    padding-left: 15px;
+
+}
+.nose{
+    width: 110px;
+    margin-bottom: 10px;
+}
+
+.itson{
+    width: 70px;
+}
+
+
+.imagenes{
+    margin: 0 0 0 30px ;
+  
+    /* display: flex; */
+    /* flex-direction: column; */
+}
+
+.nombres{
+    flex: 1;
+    color: #d4d4d4;
+    
+    font-size: clamp(0.3rem, 0.9vw, 6rem); 
+    text-align: right;
+    margin-right: 10px;
+    margin-bottom: 1px;
+}
+.fabricio{
+    margin-right: 100px;
 }

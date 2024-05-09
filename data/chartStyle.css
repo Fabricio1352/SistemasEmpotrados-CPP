@@ -24,11 +24,13 @@ html {
 }
 .condicionPlanta h1 {
   color: hsl(0 0% 98%);
-  font-size: clamp(3.2rem, 2vmin, 8rem);
+  font-size: clamp(3rem, 2vmin, 8rem);
   /* font-family: sans-serif; */
   font-family: "Poppins", sans-serif;
   margin-left: 0px;
+  font-weight: 600;
 }
+
 
 .chart {
   width: 800px;
@@ -67,8 +69,12 @@ html {
 /* display: flex;
 justify-content: space-between; */
 }
+a{
+  text-decoration: none;
+  color: inherit;
+}
 
-.botones button {
+.botonRecargarDatos,.botones button {
   appearance: none;
   background-color: #000000;
   border: 2px solid #ffffff;
@@ -170,6 +176,16 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9bc635', end
 .box:hover{
   transform: scale(1.02);
 }
+.botonRecargarDatos{
+  min-height: 20px;
+  min-width: 50px;
+  font-size: clamp(0.5rem, 2vmin, 8rem);
+  font-weight: 300;
+  background-color: rgb(18, 22, 22);
+
+}
+
+
 
 /* font-family: "Oswald", sans-serif;
 /* font-size: clamp(0.5rem, 1rem + 18vw, 15rem); */
