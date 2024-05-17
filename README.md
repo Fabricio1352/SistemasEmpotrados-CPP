@@ -6,7 +6,6 @@ Estacion Meteorologica para la medicion de presion, temperatura, humedad, veloci
 
   El sistema mide lo necesario para determinar el estado de la planta y regar automaticamente o hacerlo mediante controles manuales.
 
-  ![Diseño sin título](https://github.com/Fabricio1352/SistemasEmpotrados-CPP/assets/100040158/33abbb48-9948-4058-bc2d-4ee7c0f67558)
 ![seg](https://github.com/Fabricio1352/SistemasEmpotrados-CPP/assets/100040158/2f041911-70a2-400d-b630-5f3140ec5d2a)
 ![captura](https://github.com/Fabricio1352/SistemasEmpotrados-CPP/assets/100040158/7a5367f6-a3ab-4dd4-9252-b9e622ad567f)
 ![2 (1)](https://github.com/Fabricio1352/SistemasEmpotrados-CPP/assets/100040158/0b4a2939-0c07-4713-aad8-b4b745431b92)
